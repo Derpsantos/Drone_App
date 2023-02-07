@@ -21,8 +21,8 @@ public class DatabaseHelper {
 
     public DatabaseHelper(){this.database = FirebaseDatabase.getInstance();}
 
-    public void add_flight(String id, double motor_t, double rotor_t, boolean rotor_i, long timestamp){
-        FlightModel Flight = new FlightModel(id,  motor_t, rotor_t, rotor_i, timestamp );
+    public void add_flight(String id, double motor_t, List<Double> motor_ts, double battery_t, List<Double> battery_temps, boolean rotor_i, long timestamp){
+        FlightModel Flight = new FlightModel(id, motor_t, motor_ts, battery_t, battery_temps, rotor_i, timestamp );
 
         database.getReference().child(KEY_FLIGHT).child(id).setValue(Flight);
     }
