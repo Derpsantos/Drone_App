@@ -49,6 +49,10 @@ public class DroneConditionFragment extends Fragment {
     TextView t4;
     TextView t6;
     TextView t7;
+    TextView t8;
+    TextView t9;
+    TextView t10;
+    TextView t11;
 
     Context thiscontext;
     boolean toggle;
@@ -85,6 +89,10 @@ public class DroneConditionFragment extends Fragment {
         t4 = view.findViewById(R.id.textView4);
         t6 = view.findViewById(R.id.textView6);
         t7 = view.findViewById(R.id.textView7);
+        t8 = view.findViewById(R.id.textView8);
+        t9 = view.findViewById(R.id.textView9);
+        t10 = view.findViewById(R.id.textView10);
+        t11= view.findViewById(R.id.textView11);
         return view;
     }
 
@@ -116,11 +124,19 @@ public class DroneConditionFragment extends Fragment {
         return new CountDownTimer(10000, 500) {
 
             Random r = new Random();
-            ArrayList<Double> motor_temps = new ArrayList<>();
+            ArrayList<Double> motor_temps1 = new ArrayList<>();
+            ArrayList<Double> motor_temps2 = new ArrayList<>();
+            ArrayList<Double> motor_temps3 = new ArrayList<>();
+            ArrayList<Double> motor_temps4 = new ArrayList<>();
+            ArrayList<Double> humid_temps = new ArrayList<>();
             ArrayList<Double> battery_temps = new ArrayList<>();
 
-            double motor = 10;
-            //double motor = 80 + (80-20) * r.nextDouble();
+            //double motor = 10;
+            double motor1 = 80 + (80-20) * r.nextDouble();
+            double motor2 = 80 + (80-20) * r.nextDouble();
+            double motor3 = 80 + (80-20) * r.nextDouble();
+            double motor4 = 80 + (80-20) * r.nextDouble();
+            double humid = 80 + (80-20) * r.nextDouble();
             double battery = 50 + (50-10) * r.nextDouble();
             boolean rotor=false;
             final String id = UUID.randomUUID().toString();
@@ -129,16 +145,30 @@ public class DroneConditionFragment extends Fragment {
 
             @Override
             public void onTick(long l) {
-                motor++;
-                //motor = 80 + (80-20) * r.nextDouble();
+                //motor++;
+                motor1 = (80-20) * r.nextDouble();
+                motor2 = (80-20) * r.nextDouble();
+                motor3 = (80-20) * r.nextDouble();
+                motor4 = (80-20) * r.nextDouble();
+                humid = (80-20) * r.nextDouble();
                 battery = 50 + (50-10) * r.nextDouble();
-                t3.setText(String.format("Temperature of motor: %2f", motor) + " C");
-                t4.setText(String.format("Temperature of battery: %2f" , battery) +" C");
-                t6.setText("Rotor issue : " + rotor );
-                t7.setText("Time left: " + l/1000 + "s");
-                motor_temps.add(motor);
+                t4.setText(String.format("Temperature of motor 1: %2f", motor1) + " C");
+                t3.setText(String.format("Temperature of motor 2: %2f" , motor2) +" C");
+                t6.setText(String.format("Temperature of motor 3: %2f", motor3) + " C");
+                t7.setText(String.format("Temperature of motor 4: %2f", motor4) + " C");
+                t8.setText(String.format("Temperature of humidity: %2f", humid) + " C");
+                t9.setText(String.format("Temperature of battery: %2f", battery) + " C");
+                t10.setText("Rotor issue : " + rotor );
+                t11.setText("Time left: " + l/1000 + "s");
+                motor_temps1.add(motor1);
+                motor_temps2.add(motor2);
+                motor_temps3.add(motor3);
+                motor_temps4.add(motor4);
                 battery_temps.add(battery);
-                if(motor>15 && motor<17){
+                humid_temps.add(humid);
+
+
+                if(motor1>50 || motor2>50 ||motor3>50 || motor4>50){
                     int NOTIFICATION_ID = 234;
                     NotificationManager notificationManager = (NotificationManager) thiscontext.getSystemService(Context.NOTIFICATION_SERVICE);
                     String CHANNEL_ID;
@@ -177,17 +207,27 @@ public class DroneConditionFragment extends Fragment {
 
             @Override
             public void onFinish() {
-                motor=0;
-                battery=0;
+                double motor1max=0;
+                double motor2max=0;
+                double motor3max=0;
+                double motor4max=0;
+                double humidity_max=0;
+                double battery_max=0;
 
-                for(int i = 0; i < motor_temps.size(); i++){
-                    motor+=motor_temps.get(i);
-                    battery+=battery_temps.get(i);
+                for(int i = 0; i < motor_temps1.size(); i++){
+                    if(motor_temps1.get(i)>motor1max){
+                        motor1max= motor_temps1.get(i);
+                    }
                 }
-                motor = motor/motor_temps.size();
-                battery= battery_temps.size();
+                for(int i = 0; i < battery_temps.size(); i++){
+                    if(battery_temps.get(i)>battery_max){
+                        battery_max= battery_temps.get(i);
+                    }
+                }
 
-                database.add_flight(id, motor, motor_temps, battery, battery_temps, rotor, System.currentTimeMillis());
+
+                database.add_flight(id, motor1max,  battery_max, rotor, System.currentTimeMillis());
+                database.add_flight_recordings(id, motor_temps1, motor_temps2, motor_temps3, motor_temps4, battery_temps, humid_temps, System.currentTimeMillis());
                 toggle = false;
             }
         };

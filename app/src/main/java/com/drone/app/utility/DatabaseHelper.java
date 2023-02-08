@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.drone.app.adapters.FlightHandler;
 import com.drone.app.adapters.FlightListHandler;
 import com.drone.app.models.FlightModel;
+import com.drone.app.models.Flight_recordings;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,15 +17,21 @@ import java.util.List;
 public class DatabaseHelper {
 
     private static final String KEY_FLIGHT ="flight";
+    private static final String KEY_FLIGHT_R="FlightR";
 
     FirebaseDatabase database;
 
     public DatabaseHelper(){this.database = FirebaseDatabase.getInstance();}
 
-    public void add_flight(String id, double motor_t, List<Double> motor_ts, double battery_t, List<Double> battery_temps, boolean rotor_i, long timestamp){
-        FlightModel Flight = new FlightModel(id, motor_t, motor_ts, battery_t, battery_temps, rotor_i, timestamp );
+    public void add_flight(String id, double motor_t,  double battery_t, boolean rotor_i, long timestamp){
+        FlightModel Flight = new FlightModel(id, motor_t,  battery_t, rotor_i, timestamp );
 
         database.getReference().child(KEY_FLIGHT).child(id).setValue(Flight);
+    }
+
+    public void add_flight_recordings(String id, List<Double> motor_1, List<Double> motor2, List<Double> motor3, List<Double> motor4, List<Double> battery, List<Double> humid, long timestamp){
+        Flight_recordings flight = new Flight_recordings(id, motor_1, motor2, motor3, motor4, battery,humid, timestamp);
+        database.getReference().child(KEY_FLIGHT_R).child(id).setValue(flight);
     }
 
     public void get_flight(String id, FlightHandler handler) {

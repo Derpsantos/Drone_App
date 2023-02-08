@@ -15,22 +15,20 @@ public class FlightModel {
 
     private double Motor_temp_av;
 
-    private List<Double> motor_temps;
 
     private double Battery_temp_av;
 
-    private List<Double> battery_temps;
 
     private boolean rotor_issue;
 
     private long timestamp;
 
-    public FlightModel(String id, double motor, List<Double> motor_temps, double battery, List<Double> battery_temps, boolean rotor_i, long time){
+    public FlightModel(String id, double motor,  double battery, boolean rotor_i, long time){
         this.id=id;
         this.Motor_temp_av= motor;
-        this.motor_temps = motor_temps;
+
         this.Battery_temp_av=battery;
-        this.battery_temps=battery_temps;
+
         this.rotor_issue=rotor_i;
         this.timestamp=time;
     }
